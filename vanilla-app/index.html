@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guesses</title>
+    <style>
+    .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+    </style>
+</head>
+
+
+<body>
+
+    <ul id="guesses"></ul>
+    <p id="error"></p>
+
+    
+    <form>
+        <input name="guess" type="text">
+        <input type="submit" value="Add guess">
+    </form>
+    
+    <img id="reward" src="../squid.gif" class="center">
+
+    <script>
+        const form = document.querySelector('form');
+        const input = document.querySelector("[name='guess']");
+        const guessList = document.getElementById('guesses');
+        const ans = getRandomInt(0,100);
+        const existingGuesses = JSON.parse(localStorage.getItem('guesses')) || [];
+        var link = document.getElementById('reward');
+        link.style.display = 'none';
+
+        const guessData = [];
+
+        existingGuesses.forEach(guess => {
+            addGuess(guess);
+        });
+
+        /**
+         * Returns a random integer between min (inclusive) and max (inclusive).
+         * The value is no lower than min (or the next integer greater than min
+         * if min isn't an integer) and no greater than max (or the next integer
+         * lower than max if max isn't an integer).
+         * Using Math.round() will give you a non-uniform distribution!
+         */
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function addGuess(guessText) {
+            guessData.push(guessText);
+            const li = document.createElement('li');
+            li.innerHTML = guessText;
+            guessList.appendChild(li);
+            localStorage.setItem('guesses', JSON.stringify(guessData));
+            input.value='';
+        }
+
+
+        form.onsubmit = (event) => {
+            event.preventDefault();
+            let t = parseInt(input.value);
+            
+            if (Number.isInteger(t)) {
+                if (t < ans) {
+                    addGuess("Too cold!");
+                }
+                else if (t > ans) {
+                    addGuess("Too hot!");
+                } else {
+                    // show squidward image
+                    addGuess("Just right");
+                    link.style.display = "";
+                }
+            } else {
+                alert("Must input numbers");
+            }
+        }
+
+    </script>
+
+</body>
+
+
+</html>
